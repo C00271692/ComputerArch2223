@@ -1,8 +1,8 @@
 *-----------------------------------------------------------
 * Title      : Endless Runner Starter Kit
-* Written by : Philip Bourke
-* Date       : 25/02/2023
-* Description: Endless Runner Project Starter Kit
+* Written by : Kacper Krakowiak (C00271692)
+* Date       : 07/03/23
+* Description: Endless Runner Project 
 *-----------------------------------------------------------
     ORG    $1000
 START:                  ; first instruction of program
@@ -621,8 +621,23 @@ COLLISION_CHECK_DONE:               ; No Collision Update points
 
 COLLISION:
     BSR     PLAY_OPPS               ; Play Opps Wav
-    MOVE.L  #00, PLAYER_SCORE       ; Reset Player Score
+    ;MOVE.L  #00, PLAYER_SCORE       ; Reset Player Score
     SUB.L   #1,HEALTH
+    IF.L    (HEALTH) <EQ> #0 THEN
+    
+            MOVE.B    #TC_CURSR_P,D0          ; Set Cursor Position
+        MOVE.W    #$FF00,     D1          ; Clear contents
+        TRAP    #15                     ; Trap (Perform action)
+            
+        BSR     DRAW_PLYR_DATA          ; Draw Draw Score, HUD, Player X and Y
+            BSR     DRAW_PLAYER             ; Draw Player
+            BSR     DRAW_ENEMY
+
+            MOVE.B  #94,        D0
+            TRAP    #15
+            
+            BSR EXIT
+    ENDI
     RTS                             ; Return to subroutine
 
 *-----------------------------------------------------------
@@ -712,6 +727,9 @@ RUN_WAV         DC.B    'run.wav',0         ; Run Sound
 OPPS_WAV        DC.B    'opps.wav',0        ; Collision Opps
 
     END    START        ; last line of source
+
+
+
 
 
 *~Font name~Courier New~
